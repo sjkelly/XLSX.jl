@@ -23,7 +23,7 @@ end
 
 function add_shared_string!(sst::SharedStringTable, str_unformatted::AbstractString, str_formatted::AbstractString) :: Int
     i = get_shared_string_index(sst, str_formatted)
-    if i != nothing
+    if i !== nothing
         # it's already in the table
         return i
     else

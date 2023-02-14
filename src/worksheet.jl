@@ -12,7 +12,6 @@ end
 
 # 18.3.1.35 - dimension (Worksheet Dimensions). This is optional, and not required.
 function read_worksheet_dimension(xf::XLSXFile, relationship_id, name) :: Union{Nothing, CellRange}
-    local result::Union{Nothing, CellRange} = nothing
 
     wb = get_workbook(xf)
     target_file = get_relationship_target_by_id("xl", wb, relationship_id)
@@ -20,14 +19,14 @@ function read_worksheet_dimension(xf::XLSXFile, relationship_id, name) :: Union{
 
     try
         # read Worksheet dimension
-        while EzXML.iterate(reader) != nothing
+        while EzXML.iterate(reader) !== nothing
             if EzXML.nodetype(reader) == EzXML.READER_ELEMENT && EzXML.nodename(reader) == "dimension"
-                @assert EzXML.nodedepth(reader) == 1 "Malformed Worksheet \"$(ws.name)\": unexpected node depth for dimension node: $(EzXML.nodedepth(reader))."
+                @assert EzXML.nodedepth(reader) == 1 "Malformed Worksheet \"$(wb.name)\": unexpected node depth for dimension node: $(EzXML.nodedepth(reader))."
                 ref_str = reader["ref"]
                 if is_valid_cellname(ref_str)
-                    result = CellRange("$(ref_str):$(ref_str)")
+                    return CellRange("$(ref_str):$(ref_str)")
                 else
-                    result = CellRange(ref_str)
+                    return CellRange(ref_str)
                 end
 
                 break
@@ -38,7 +37,7 @@ function read_worksheet_dimension(xf::XLSXFile, relationship_id, name) :: Union{
         close(zip_io)
     end
 
-    return result
+    return nothing
 end
 
 @inline isdate1904(ws::Worksheet) = isdate1904(get_workbook(ws))
@@ -166,7 +165,7 @@ end
 getdata(ws::Worksheet, rng::SheetCellRange) = getdata(get_xlsxfile(ws), rng)
 
 function getdata(ws::Worksheet)
-    if ws.dimension != nothing
+    if ws.dimension !== nothing
         return getdata(ws, get_dimension(ws))
     else
         error("Worksheet dimension is unknown.")
@@ -179,7 +178,7 @@ Base.getindex(ws::Worksheet, ::Colon) = getdata(ws)
 
 function Base.show(io::IO, ws::Worksheet)
     hidden_string = ws.is_hidden ? "(hidden)" : ""
-    if get_dimension(ws) != nothing
+    if get_dimension(ws) !== nothing
         rg = get_dimension(ws)
         nrow, ncol = size(rg)
         @printf(io, "%d×%d %s: [\"%s\"](%s) %s", nrow, ncol, typeof(ws), ws.name, rg, hidden_string)
