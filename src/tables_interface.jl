@@ -8,6 +8,7 @@ Tables.schema(itr::TableRowIterator) = Tables.Schema(itr.index.column_labels, fi
 Tables.columnnames(tr::TableRow) = tr.index.column_labels
 Tables.getcolumn(tr::TableRow, nm::Symbol) = getdata(tr, nm)
 Tables.getcolumn(tr::TableRow, i::Integer) = getdata(tr, i)
+Tables.getcolumn(tr::TableRow, i::Int) = getdata(tr, i)
 
 _as_vector(y::AbstractVector) = y
 _as_vector(y) = collect(y)

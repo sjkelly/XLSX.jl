@@ -338,8 +338,9 @@ function setdata!(sheet::Worksheet, ref::CellRef, data::AbstractVector, dim::Int
     end
 end
 
-Base.setindex!(ws::Worksheet, v::AbstractVector, r::Union{Colon, UnitRange{T}}, c) where {T<:Integer} = setdata!(ws, r, c, v)
-Base.setindex!(ws::Worksheet, v::AbstractVector, r, c::Union{Colon, UnitRange{T}}) where {T<:Integer} = setdata!(ws, r, c, v)
+Base.setindex!(ws::Worksheet, v::AbstractVector, r::Union{Colon, UnitRange{<:Integer}}, c) = setdata!(ws, r, c, v)
+Base.setindex!(ws::Worksheet, v::AbstractVector, r, c::Union{Colon, UnitRange{<:Integer}}) = setdata!(ws, r, c, v)
+Base.setindex!(ws::Worksheet, v::AbstractVector, r::Union{Colon, UnitRange{<:Integer}}, c::Union{Colon, UnitRange{<:Integer}}) = setdata!(ws, r, c, v)
 setdata!(sheet::Worksheet, ::Colon, col::Integer, data::AbstractVector) = setdata!(sheet, 1, col, data, 1)
 setdata!(sheet::Worksheet, row::Integer, ::Colon, data::AbstractVector) = setdata!(sheet, row, 1, data, 2)
 
